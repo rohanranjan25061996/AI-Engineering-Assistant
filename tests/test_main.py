@@ -11,6 +11,7 @@ class TestValidateArguments(unittest.TestCase):
             query="hello",
             directory=".",
             max_results=10,
+            context=0,
         )
 
         validate_arguments(args)
@@ -20,6 +21,7 @@ class TestValidateArguments(unittest.TestCase):
             query="",
             directory=".",
             max_results=10,
+            context=0,
         )
 
         with self.assertRaises(ValueError):
@@ -30,6 +32,7 @@ class TestValidateArguments(unittest.TestCase):
             query="hello",
             directory=".",
             max_results=0,
+            context=0,
         )
 
         with self.assertRaises(ValueError):
@@ -40,6 +43,18 @@ class TestValidateArguments(unittest.TestCase):
             query="hello",
             directory=".",
             max_results=-1,
+            context=0,
+        )
+
+        with self.assertRaises(ValueError):
+            validate_arguments(args)
+
+    def test_negative_context(self):
+        args = Namespace(
+            query="hello",
+            directory=".",
+            max_results=10,
+            context=-1,
         )
 
         with self.assertRaises(ValueError):

@@ -67,6 +67,32 @@ class TestSearchFile(unittest.TestCase):
             )
 
             self.assertEqual(len(results), 2)
+    def test_search_returns_context(self):
+        with TemporaryDirectory() as temp_dir:
+            file_path = Path(temp_dir) / "example.py"
+
+            file_path.write_text(
+                "line 1\n"
+                "line 2\n"
+                "find this\n"
+                "line 4\n"
+                "line 5\n"
+            )
+
+            results = search_file(
+                file_path,
+                "find this",
+                context=1,
+            )
+
+            self.assertEqual(len(results), 1)
+
+            result = results[0]
+
+            self.assertEqual(result.line_number, 3)
+            self.assertEqual(result.line, "find this")
+            self.assertEqual(result.context_before, ["line 2"])
+            self.assertEqual(result.context_after, ["line 4"])
 
 
 if __name__ == "__main__":
