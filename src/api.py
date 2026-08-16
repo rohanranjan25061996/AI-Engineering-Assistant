@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
 from src.service import SearchService
@@ -9,9 +9,6 @@ app = FastAPI(
     description="Code search API",
     version="1.0.0",
 )
-
-
-search_service = SearchService()
 
 
 class SearchResultResponse(BaseModel):
@@ -26,6 +23,10 @@ class SearchResponse(BaseModel):
     query: str
     total: int
     results: list[SearchResultResponse]
+
+
+def get_search_service() -> SearchService:
+    return SearchService()
 
 
 @app.get("/health")
@@ -55,6 +56,7 @@ def search(
         ge=0,
         description="Context lines before and after a match",
     ),
+    search_service: SearchService = Depends(get_search_service),
 ):
     if not query.strip():
         raise HTTPException(
@@ -92,7 +94,3 @@ def search(
         total=len(response_results),
         results=response_results,
     )
-
-
-if __name__ == "__main__":
-    print("API module")
