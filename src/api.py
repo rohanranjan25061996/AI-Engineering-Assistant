@@ -17,6 +17,8 @@ class SearchResultResponse(BaseModel):
     line: str
     context_before: list[str]
     context_after: list[str]
+    language: str
+    symbol: str | None
 
 
 class SearchResponse(BaseModel):
@@ -36,7 +38,10 @@ def health_check():
     }
 
 
-@app.get("/search", response_model=SearchResponse)
+@app.get(
+    "/search",
+    response_model=SearchResponse,
+)
 def search(
     query: str = Query(
         min_length=1,
@@ -56,7 +61,9 @@ def search(
         ge=0,
         description="Context lines before and after a match",
     ),
-    search_service: SearchService = Depends(get_search_service),
+    search_service: SearchService = Depends(
+        get_search_service
+    ),
 ):
     if not query.strip():
         raise HTTPException(
@@ -72,7 +79,11 @@ def search(
             context=context,
         )
 
-    except (FileNotFoundError, NotADirectoryError) as error:
+    except (
+        FileNotFoundError,
+        NotADirectoryError,
+    ) as error:
+
         raise HTTPException(
             status_code=400,
             detail=str(error),
@@ -85,6 +96,8 @@ def search(
             line=result.line,
             context_before=result.context_before,
             context_after=result.context_after,
+            language=result.language,
+            symbol=result.symbol,
         )
         for result in results
     ]

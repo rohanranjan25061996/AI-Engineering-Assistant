@@ -10,6 +10,7 @@ class SearchService:
         max_results: int = 50,
         context: int = 0,
     ) -> list[SearchResult]:
+
         return search_directory(
             directory=directory,
             query=query,

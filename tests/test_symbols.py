@@ -111,7 +111,10 @@ class TestExtractSymbols(unittest.TestCase):
 
             symbols = extract_symbols(file_path)
 
-            self.assertEqual(symbols, [])
+            self.assertEqual(
+                symbols,
+                [],
+            )
 
     def test_invalid_utf8(self):
         with TemporaryDirectory() as temp_dir:
@@ -123,7 +126,10 @@ class TestExtractSymbols(unittest.TestCase):
 
             symbols = extract_symbols(file_path)
 
-            self.assertEqual(symbols, [])
+            self.assertEqual(
+                symbols,
+                [],
+            )
 
 
 if __name__ == "__main__":

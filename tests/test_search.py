@@ -107,6 +107,58 @@ class TestSearchFile(unittest.TestCase):
 
         self.assertEqual(results, [])
 
+    def test_search_includes_language(self):
+        with TemporaryDirectory() as temp_dir:
+            file_path = Path(temp_dir) / "example.py"
+
+            file_path.write_text(
+                "def hello():\n"
+                "    return True\n"
+            )
+
+            results = search_file(
+                file_path,
+                "hello",
+            )
+
+            self.assertEqual(
+                len(results),
+                1,
+            )
+
+            result = results[0]
+
+            self.assertEqual(
+                result.language,
+                "python",
+            )
+
+    def test_search_includes_symbol(self):
+        with TemporaryDirectory() as temp_dir:
+            file_path = Path(temp_dir) / "example.py"
+
+            file_path.write_text(
+                "def hello():\n"
+                "    return True\n"
+            )
+
+            results = search_file(
+                file_path,
+                "hello",
+            )
+
+            self.assertEqual(
+                len(results),
+                1,
+            )
+
+            result = results[0]
+
+            self.assertEqual(
+                result.symbol,
+                "hello",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
