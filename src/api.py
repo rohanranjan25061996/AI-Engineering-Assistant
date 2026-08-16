@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
-from src.search import search_directory
+from src.service import SearchService
 
 
 app = FastAPI(
@@ -9,6 +9,9 @@ app = FastAPI(
     description="Code search API",
     version="1.0.0",
 )
+
+
+search_service = SearchService()
 
 
 class SearchResultResponse(BaseModel):
@@ -60,7 +63,7 @@ def search(
         )
 
     try:
-        results = search_directory(
+        results = search_service.search(
             directory=directory,
             query=query,
             max_results=max_results,
@@ -89,3 +92,7 @@ def search(
         total=len(response_results),
         results=response_results,
     )
+
+
+if __name__ == "__main__":
+    print("API module")
