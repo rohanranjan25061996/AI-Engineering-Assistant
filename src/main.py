@@ -1,23 +1,40 @@
-import sys
+import argparse
 
 from src.scanner import scan_directory
 from src.search import search_file
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Search source code files for a text query."
+    )
+
+    parser.add_argument(
+        "query",
+        help="Text to search for",
+    )
+
+    parser.add_argument(
+        "directory",
+        help="Directory to search",
+    )
+
+    return parser.parse_args()
+
+
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: python -m src.main <query> <directory>")
+    args = parse_arguments()
+
+    try:
+        files = scan_directory(args.directory)
+    except (FileNotFoundError, NotADirectoryError) as error:
+        print(f"Error: {error}")
         return
-
-    query = sys.argv[1]
-    directory = sys.argv[2]
-
-    files = scan_directory(directory)
 
     total_matches = 0
 
     for file_path in files:
-        matches = search_file(file_path, query)
+        matches = search_file(file_path, args.query)
 
         for line_number, line in matches:
             print(f"{file_path}:{line_number}")
