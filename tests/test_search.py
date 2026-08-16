@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from src.search import search_file
+from src.search import SearchResult, search_file
 
 
 class TestSearchFile(unittest.TestCase):
@@ -18,9 +18,9 @@ class TestSearchFile(unittest.TestCase):
 
             results = search_file(file_path, "hello")
 
-            self.assertEqual(len(results), 2)
-            self.assertEqual(results[0][0], 1)
-            self.assertEqual(results[1][0], 2)
+            self.assertIsInstance(results[0], SearchResult)
+            self.assertEqual(results[0].line_number, 1)
+            self.assertEqual(results[1].line_number, 2)
 
     def test_search_is_case_insensitive(self):
         with TemporaryDirectory() as temp_dir:

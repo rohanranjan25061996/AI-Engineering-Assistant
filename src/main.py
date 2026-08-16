@@ -36,9 +36,9 @@ def main():
     for file_path in files:
         matches = search_file(file_path, args.query)
 
-        for line_number, line in matches:
-            print(f"{file_path}:{line_number}")
-            print(f"    {line}")
+        for result in matches:
+            print(f"{result.file_path}:{result.line_number}")
+            print(f"    {result.line}")
             print()
 
             total_matches += 1
