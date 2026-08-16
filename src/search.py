@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+from src.scanner import scan_directory
+
 
 @dataclass
 class SearchResult:
@@ -17,12 +19,14 @@ def search_file(
     context: int = 0,
 ) -> list[SearchResult]:
     try:
-        lines = file_path.read_text(encoding="utf-8").splitlines()
+        lines = file_path.read_text(
+            encoding="utf-8"
+        ).splitlines()
 
     except (UnicodeDecodeError, PermissionError, OSError):
         return []
 
-    matches = []
+    matches: list[SearchResult] = []
 
     for index, line in enumerate(lines):
         if query.lower() not in line.lower():
@@ -50,11 +54,9 @@ def search_directory(
     max_results: int = 50,
     context: int = 0,
 ) -> list[SearchResult]:
-    from src.scanner import scan_directory
-
     files = scan_directory(directory)
 
-    results = []
+    results: list[SearchResult] = []
 
     for file_path in files:
         matches = search_file(

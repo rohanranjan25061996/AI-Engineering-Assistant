@@ -22,7 +22,7 @@ def parse_arguments():
         "--max-results",
         type=int,
         default=50,
-        help="Maximum number of search results to display (default: 50)",
+        help="Maximum number of search results.",
     )
 
     parser.add_argument(
@@ -40,10 +40,14 @@ def validate_arguments(args):
         raise ValueError("Search query cannot be empty.")
 
     if args.max_results <= 0:
-        raise ValueError("max-results must be greater than 0.")
+        raise ValueError(
+            "max-results must be greater than 0."
+        )
 
     if args.context < 0:
-        raise ValueError("context cannot be negative.")
+        raise ValueError(
+            "context cannot be negative."
+        )
 
 
 def main():
@@ -59,25 +63,39 @@ def main():
             context=args.context,
         )
 
-    except (ValueError, FileNotFoundError, NotADirectoryError) as error:
+    except (
+        ValueError,
+        FileNotFoundError,
+        NotADirectoryError,
+    ) as error:
         print(f"Error: {error}")
         return
 
     for result in results:
-        print(f"{result.file_path}:{result.line_number}")
+        print(
+            f"{result.file_path}:{result.line_number}"
+        )
 
         if result.context_before:
             first_line_number = (
-                result.line_number - len(result.context_before)
+                result.line_number
+                - len(result.context_before)
             )
 
-            for offset, line in enumerate(result.context_before):
+            for offset, line in enumerate(
+                result.context_before
+            ):
                 line_number = first_line_number + offset
                 print(f"    {line_number} | {line}")
 
-        print(f"    {result.line_number} | {result.line}")
+        print(
+            f"    {result.line_number} | {result.line}"
+        )
 
-        for offset, line in enumerate(result.context_after, start=1):
+        for offset, line in enumerate(
+            result.context_after,
+            start=1,
+        ):
             line_number = result.line_number + offset
             print(f"    {line_number} | {line}")
 

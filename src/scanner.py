@@ -31,18 +31,25 @@ def scan_directory(directory: str) -> list[Path]:
     root = Path(directory)
 
     if not root.exists():
-        raise FileNotFoundError(f"Directory does not exist: {directory}")
+        raise FileNotFoundError(
+            f"Directory does not exist: {directory}"
+        )
 
     if not root.is_dir():
-        raise NotADirectoryError(f"Not a directory: {directory}")
+        raise NotADirectoryError(
+            f"Not a directory: {directory}"
+        )
 
-    files = []
+    files: list[Path] = []
 
     for path in root.rglob("*"):
         if not path.is_file():
             continue
 
-        if any(part in IGNORED_DIRECTORIES for part in path.parts):
+        if any(
+            part in IGNORED_DIRECTORIES
+            for part in path.parts
+        ):
             continue
 
         if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
