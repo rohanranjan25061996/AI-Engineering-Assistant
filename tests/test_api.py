@@ -49,12 +49,7 @@ class TestSearchEndpoint(unittest.TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(
-            response.json()["detail"],
-            "Search query cannot be empty.",
-        )
+        self.assertEqual(response.status_code, 422)
 
     def test_invalid_max_results(self):
         response = client.get(
@@ -66,12 +61,7 @@ class TestSearchEndpoint(unittest.TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(
-            response.json()["detail"],
-            "max_results must be greater than 0.",
-        )
+        self.assertEqual(response.status_code, 422)
 
     def test_negative_context(self):
         response = client.get(
@@ -83,12 +73,7 @@ class TestSearchEndpoint(unittest.TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 400)
-
-        self.assertEqual(
-            response.json()["detail"],
-            "context cannot be negative.",
-        )
+        self.assertEqual(response.status_code, 422)
 
     def test_invalid_directory(self):
         response = client.get(

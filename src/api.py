@@ -1,7 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
-from src.search import SearchResult, search_directory
+from src.search import search_directory
 
 
 app = FastAPI(
@@ -34,27 +34,29 @@ def health_check():
 
 @app.get("/search", response_model=SearchResponse)
 def search(
-    query: str,
-    directory: str = ".",
-    max_results: int = 50,
-    context: int = 0,
+    query: str = Query(
+        min_length=1,
+        description="Text to search for",
+    ),
+    directory: str = Query(
+        default=".",
+        description="Directory to search",
+    ),
+    max_results: int = Query(
+        default=50,
+        ge=1,
+        description="Maximum number of results",
+    ),
+    context: int = Query(
+        default=0,
+        ge=0,
+        description="Context lines before and after a match",
+    ),
 ):
     if not query.strip():
         raise HTTPException(
             status_code=400,
             detail="Search query cannot be empty.",
-        )
-
-    if max_results <= 0:
-        raise HTTPException(
-            status_code=400,
-            detail="max_results must be greater than 0.",
-        )
-
-    if context < 0:
-        raise HTTPException(
-            status_code=400,
-            detail="context cannot be negative.",
         )
 
     try:
