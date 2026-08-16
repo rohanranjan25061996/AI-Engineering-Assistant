@@ -45,6 +45,28 @@ class TestSearchFile(unittest.TestCase):
             results = search_file(file_path, "python")
 
             self.assertEqual(results, [])
+    def test_search_directory_respects_max_results(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+
+            (root / "one.py").write_text(
+                "def hello():\n"
+                "    print('hello')\n"
+            )
+
+            (root / "two.py").write_text(
+                "def hello_again():\n"
+            )
+
+            from src.search import search_directory
+
+            results = search_directory(
+                temp_dir,
+                "hello",
+                max_results=2,
+            )
+
+            self.assertEqual(len(results), 2)
 
 
 if __name__ == "__main__":

@@ -28,3 +28,26 @@ def search_file(file_path: Path, query: str) -> list[SearchResult]:
         return []
 
     return matches
+
+
+def search_directory(
+    directory: str,
+    query: str,
+    max_results: int = 50,
+) -> list[SearchResult]:
+    from src.scanner import scan_directory
+
+    files = scan_directory(directory)
+
+    results = []
+
+    for file_path in files:
+        matches = search_file(file_path, query)
+
+        for match in matches:
+            results.append(match)
+
+            if len(results) >= max_results:
+                return results
+
+    return results

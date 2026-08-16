@@ -1,7 +1,6 @@
 import argparse
 
-from src.scanner import scan_directory
-from src.search import search_file
+from src.search import search_directory
 
 
 def parse_arguments():
@@ -19,31 +18,46 @@ def parse_arguments():
         help="Directory to search",
     )
 
+    parser.add_argument(
+        "--max-results",
+        type=int,
+        default=50,
+        help="Maximum number of search results to display (default: 50)",
+    )
+
     return parser.parse_args()
+
+
+def validate_arguments(args):
+    if not args.query.strip():
+        raise ValueError("Search query cannot be empty.")
+
+    if args.max_results <= 0:
+        raise ValueError("max-results must be greater than 0.")
 
 
 def main():
     args = parse_arguments()
 
     try:
-        files = scan_directory(args.directory)
-    except (FileNotFoundError, NotADirectoryError) as error:
+        validate_arguments(args)
+
+        results = search_directory(
+            directory=args.directory,
+            query=args.query,
+            max_results=args.max_results,
+        )
+
+    except (ValueError, FileNotFoundError, NotADirectoryError) as error:
         print(f"Error: {error}")
         return
 
-    total_matches = 0
+    for result in results:
+        print(f"{result.file_path}:{result.line_number}")
+        print(f"    {result.line}")
+        print()
 
-    for file_path in files:
-        matches = search_file(file_path, args.query)
-
-        for result in matches:
-            print(f"{result.file_path}:{result.line_number}")
-            print(f"    {result.line}")
-            print()
-
-            total_matches += 1
-
-    print(f"Found {total_matches} matches")
+    print(f"Found {len(results)} matches")
 
 
 if __name__ == "__main__":
