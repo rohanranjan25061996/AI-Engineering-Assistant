@@ -94,6 +94,19 @@ class TestSearchFile(unittest.TestCase):
             self.assertEqual(result.context_before, ["line 2"])
             self.assertEqual(result.context_after, ["line 4"])
 
+    def test_handles_invalid_utf8_file(self):
+        with TemporaryDirectory() as temp_dir:
+            file_path = Path(temp_dir) / "invalid.py"
+
+            file_path.write_bytes(b"\xff\xfe\xfd")
+
+            results = search_file(
+                file_path,
+                "hello",
+            )
+
+        self.assertEqual(results, [])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -16,13 +16,13 @@ def search_file(
     query: str,
     context: int = 0,
 ) -> list[SearchResult]:
-    matches = []
-
     try:
         lines = file_path.read_text(encoding="utf-8").splitlines()
 
-    except (UnicodeDecodeError, PermissionError):
+    except (UnicodeDecodeError, PermissionError, OSError):
         return []
+
+    matches = []
 
     for index, line in enumerate(lines):
         if query.lower() not in line.lower():
@@ -31,16 +31,13 @@ def search_file(
         start = max(0, index - context)
         end = min(len(lines), index + context + 1)
 
-        context_before = lines[start:index]
-        context_after = lines[index + 1:end]
-
         matches.append(
             SearchResult(
                 file_path=file_path,
                 line_number=index + 1,
                 line=line,
-                context_before=context_before,
-                context_after=context_after,
+                context_before=lines[start:index],
+                context_after=lines[index + 1:end],
             )
         )
 
